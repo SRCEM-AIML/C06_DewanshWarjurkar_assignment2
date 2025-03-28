@@ -1,33 +1,25 @@
 pipeline {
     agent any
+
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/SRCEM-AIML/C06_DewanshWarjurkar_assignment2.git'
+                git 'https://github.com/SRCEM-AIML/C06_DewanshWarjurkar_assignment2.git'
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                script {
-                    try {
-                        bat 'docker build -t dewanshhh24/studentproject .'
-                    } catch (Exception e) {
-                        error "Docker build failed: ${e}"
-                    }
-                }
+                sh 'docker build -t studentproject .'
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    try {
-                        withDockerRegistry(credentialsId: 'docker-hub-credentials') {
-                            sh 'docker build -t studentproject .'
-
-                        }
-                    } catch (Exception e) {
-                        error "Docker push failed: ${e}"
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker tag studentproject $DOCKER_USER/studentproject:latest'
+                    sh 'docker push $DOCKER_USER/studentproject:latest'
                 }
             }
         }
