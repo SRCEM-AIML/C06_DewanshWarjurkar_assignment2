@@ -22,7 +22,8 @@ pipeline {
                 script {
                     try {
                         withDockerRegistry(credentialsId: 'docker-hub-credentials') {
-                            bat 'docker push dewanshhh24/studentproject'
+                            sh 'docker build -t studentproject .'
+
                         }
                     } catch (Exception e) {
                         error "Docker push failed: ${e}"
