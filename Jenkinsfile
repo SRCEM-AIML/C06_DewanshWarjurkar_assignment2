@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/SRCEM-AIML/C06_DewanshWarjurkar_assignment2.git'
+                git branch: 'main', url: 'https://github.com/SRCEM-AIML/C06_DewanshWarjurkar_assignment2.git'
             }
         }
 
@@ -16,10 +16,14 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub', 
+                    usernameVariable: 'DOCKER_USER', 
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker tag studentproject $DOCKER_USER/studentproject:latest'
-                    sh 'docker push $DOCKER_USER/studentproject:latest'
+                    sh 'docker tag studentproject dewanshhh24/studentproject:latest'
+                    sh 'docker push dewanshhh24/studentproject:latest'
                 }
             }
         }
